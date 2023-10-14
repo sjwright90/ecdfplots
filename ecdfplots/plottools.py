@@ -92,6 +92,7 @@ class Ecdf_Plotter:
     def plotter(self):
         with PdfPages(self.destination / self.filename) as pdf:  # type: ignore
             for col in self.imputed_data.loc[:, self.metals].columns:
+                n_raw_missing = self.raw_data[col].isna().sum()
                 figx, axx = plt.subplots()
                 x_r, y_r, l_r, u_r = ecdf_CI(self.raw_data[col].values)
                 x_i, y_i, l_i, u_i = ecdf_CI(self.imputed_data[col].values)
@@ -107,5 +108,19 @@ class Ecdf_Plotter:
                 axx.set_xlabel(col, size=14)
                 axx.set_ylabel("ECDF", size=14)
                 axx.set_ylim(bottom=0.15)
-                pdf.savefig(figx)
+                axx.text(
+                    0.5,
+                    -0.18,
+                    s=f"Raw missing: {n_raw_missing}\nTotal samples: {len(self.imputed_data)}",
+                    transform=axx.transAxes,
+                    size=9,
+                    ha="center",
+                    va="top",
+                    bbox=dict(
+                        boxstyle="round",
+                        facecolor="none",
+                        edgecolor="black",
+                    ),
+                )
+                pdf.savefig(figx, bbox_inches="tight", pad_inches=0.5)
                 plt.close()
