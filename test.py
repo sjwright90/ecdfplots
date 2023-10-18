@@ -57,5 +57,5 @@ for col in ["A", "B"]:
 plotter = Ecdf_Plotter(raw_data, imputed_data, ["A", "B"])
 # %%
 plotter.plotter()
-
+# should run
 # %%
